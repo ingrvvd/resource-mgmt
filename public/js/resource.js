@@ -1,5 +1,11 @@
 const addResource = () => {
   let response = "";
+  const messageElement = document.getElementById("message");
+
+  // Clear any previous messages
+  messageElement.innerHTML = "";
+  
+  // Collecting form data
   const jsonData = {
     name: document.getElementById("name").value,
     location: document.getElementById("location").value,
@@ -9,33 +15,40 @@ const addResource = () => {
 
   // Validation
   if (!jsonData.name || !jsonData.location || !jsonData.description) {
-    document.getElementById("message").innerHTML = "All fields are required!";
-    document.getElementById("message").setAttribute("class", "text-danger");
+    messageElement.innerHTML = "All fields are required!";
+    messageElement.setAttribute("class", "text-danger");
     return;
   }
 
+  // AJAX Request
   const request = new XMLHttpRequest();
   request.open("POST", "/add-resource", true);
   request.setRequestHeader("Content-Type", "application/json");
+  
   request.onload = () => {
     response = JSON.parse(request.responseText);
     console.log(response);
-    const messageElement = document.getElementById("message");
 
     if (request.status === 200) {
-      messageElement.innerHTML = "Added Resource: " + jsonData.name + "!";
+      messageElement.innerHTML = `Added Resource: ${jsonData.name}!`;
       messageElement.setAttribute("class", "text-success");
       resetForm();
-      window.location.href = "index.html";
+
+      // Delay redirect for 2 seconds to allow user to read the message
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 2000);
     } else {
-      messageElement.innerHTML = "Unable to add resource!";
+      messageElement.innerHTML = "Unable to add resource! Check server response for details.";
       messageElement.setAttribute("class", "text-danger");
+      console.error("Error:", response); // Log detailed error for debugging
     }
   };
 
+  // Network Error Handling
   request.onerror = () => {
-    document.getElementById("message").innerHTML = "Network error occurred!";
-    document.getElementById("message").setAttribute("class", "text-danger");
+    messageElement.innerHTML = "Network error occurred!";
+    messageElement.setAttribute("class", "text-danger");
   };
 
   request.send(JSON.stringify(jsonData));
