@@ -62,3 +62,11 @@ export const addResource = async (req: Request, res: Response) => {
   }
 };
 
+export const viewResources = async (req:Request, res:Response) => {
+  try {
+  const allResources = await readJSON('utils/resources.json');
+  return res.status(201).json(allResources);
+  } catch (error) {
+  return res.status(500).json({ message: error });
+  }
+  }
