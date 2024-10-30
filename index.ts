@@ -1,5 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
+import {addTourValidation, addResource } from "./utils/ResourceUtil";
 
 export const app = express();
 const PORT = process.env.PORT || 5050;
@@ -12,6 +13,8 @@ app.use(express.static("./public"));
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/" + startPage);
 });
+
+app.post('/add-resource', addTourValidation, addResource)
 
 export const server = app.listen(PORT, () => {
   const address = server.address();
