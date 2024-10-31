@@ -26,7 +26,7 @@ export const writeJSON = async (object: Resource, filename: string) => {
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const addTourValidation = [
+export const addResourceValidation = [
   check("name").trim().notEmpty().withMessage("Name is required."),
 
   check("location").trim().notEmpty().withMessage("Location is required."),

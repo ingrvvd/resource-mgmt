@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import {addTourValidation, addResource, viewResources, editResource, deleteResource, updateResourceValidation } from "./utils/ResourceUtil";
+import {addResource, viewResources, editResource, deleteResource, updateResourceValidation, addResourceValidation } from "./utils/ResourceUtil";
 
 export const app = express();
 const PORT = process.env.PORT || 5050;
@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/" + startPage);
 });
 
-app.post('/add-resource', addTourValidation, addResource)
+app.post('/add-resource', addResourceValidation, addResource)
 app.get('/view-resources', viewResources)
 app.put('/edit-resource/:id', updateResourceValidation, editResource)
 app.delete('/delete-resource/:id', deleteResource)
