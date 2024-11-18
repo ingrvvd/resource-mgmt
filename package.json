@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/chai": "^5.0.1",
     "@types/chai-http": "^4.2.4",
+    "@types/express": "^5.0.0",
     "@types/mocha": "^10.0.9",
     "@types/supertest": "^6.0.2",
     "body-parser": "^1.20.3",
