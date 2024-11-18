@@ -44,10 +44,10 @@ export const addTourValidation = [
     .matches(emailRegex)
 ];
 
-export const addResource = async (req: Request, res: Response) => {
+export const addResource = async (req: Request, res: Response): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ errors: errors.array() });
   }
   try {
     const { name, location, description, owner } = req.body;
@@ -59,36 +59,36 @@ export const addResource = async (req: Request, res: Response) => {
       newResource,
       "utils/resources.json"
     );
-    return res.status(201).json(updatedResources);
+    res.status(201).json(updatedResources);
   } catch (error) {
-    return res.status(500).json({ message: "cannot post" });
+    res.status(500).json({ message: "cannot post" });
   }
 };
 
-export const viewResources = async (req: Request, res: Response) => {
+export const viewResources = async (req: Request, res: Response): Promise<void> => {
   try {
     const allResources = await readJSON("utils/resources.json");
-    return res.status(200).json(allResources);
+    res.status(200).json(allResources);
   } catch (error) {
-    return res.status(500).json({ message: error });
+    res.status(500).json({ message: error });
   }
 };
 
-export const viewResourceById = async (req: Request, res: Response) => {
+export const viewResourceById = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = req.params.id;
     const resources = await readJSON("utils/resources.json");
     const resource = resources.find((resource: Resource) => resource.id === id);
 
     if (!resource) {
-      return res.status(404).json({ message: "Resource not found" });
+      res.status(404).json({ message: "Resource not found" });
     }
 
-    return res.status(200).json(resource);
+    res.status(200).json(resource);
   } catch (error) {
     console.error("Error retrieving resource:", error); // Helpful for debugging
-    return res.status(500).json({
-      message: "An error occurred while retrieving the resource.",
+    res.status(500).json({
+      message: "An error occurred while retrieving the resource."
     });
   }
 };
@@ -108,10 +108,13 @@ export const updateResourceValidation = [
     .withMessage("Description is required.")
 ];
 
-export const editResource = async (req: Request, res: Response) => {
+export const editResource = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ errors: errors.array() });
   }
   const id = req.params.id;
   const name = req.body.name;
@@ -127,7 +130,7 @@ export const editResource = async (req: Request, res: Response) => {
       (resource: any) => resource.id === id
     );
     if (resourceIndex === -1) {
-      return res
+      res
         .status(404)
         .json({ message: "Resource not found, unable to modify!" });
     }
@@ -146,18 +149,16 @@ export const editResource = async (req: Request, res: Response) => {
         JSON.stringify(allResources),
         "utf8"
       );
-      return res
-        .status(200)
-        .json({ message: "Resource modified successfully!" });
+      res.status(200).json({ message: "Resource modified successfully!" });
     } catch (writeError) {
-      return res.status(400).json({ message: "Failed to save modifications." });
+      res.status(400).json({ message: "Failed to save modifications." });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Failed to read resources." });
+    res.status(500).json({ message: "Failed to read resources." });
   }
 };
 
-export const deleteResource = async (req: Request, res: Response) => {
+export const deleteResource = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = req.params.id;
     const allResources = await readJSON("utils/resources.json");
@@ -174,7 +175,7 @@ export const deleteResource = async (req: Request, res: Response) => {
 
     // Handle the resource not found
     if (index === -1) {
-      return res.status(404).json({ message: "Resource not found!" });
+      res.status(404).json({ message: "Resource not found!" });
     }
 
     // Remove the resource and update the file
@@ -185,8 +186,8 @@ export const deleteResource = async (req: Request, res: Response) => {
       "utf8"
     );
 
-    return res.status(200).json({ message: "Resource deleted successfully!" });
+    res.status(200).json({ message: "Resource deleted successfully!" });
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error", error });
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
