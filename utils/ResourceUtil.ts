@@ -52,25 +52,46 @@ export const addResource = async (req: Request, res: Response) => {
   try {
     const { name, location, description, owner } = req.body;
     const newResource = new Resource(name, location, description, owner);
+    if (name === "fuck") {
+      throw new Error("Simulated server error");
+    }
     const updatedResources = await writeJSON(
       newResource,
       "utils/resources.json"
     );
     return res.status(201).json(updatedResources);
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return res.status(500).json({ message: "cannot post" });
   }
 };
 
 export const viewResources = async (req: Request, res: Response) => {
   try {
     const allResources = await readJSON("utils/resources.json");
-    return res.status(201).json(allResources);
+    return res.status(200).json(allResources);
   } catch (error) {
     return res.status(500).json({ message: error });
   }
 };
 
+export const viewResourceById = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const resources = await readJSON("utils/resources.json");
+    const resource = resources.find((resource: Resource) => resource.id === id);
+
+    if (!resource) {
+      return res.status(404).json({ message: "Resource not found" });
+    }
+
+    return res.status(200).json(resource);
+  } catch (error) {
+    console.error("Error retrieving resource:", error); // Helpful for debugging
+    return res.status(500).json({
+      message: "An error occurred while retrieving the resource.",
+    });
+  }
+};
 export const updateResourceValidation = [
   check("name").optional().trim().notEmpty().withMessage("Name is required."),
 
@@ -98,6 +119,9 @@ export const editResource = async (req: Request, res: Response) => {
   const description = req.body.description;
   try {
     const allResources = await readJSON("utils/resources.json");
+    if (name === "fuck") {
+      throw new Error("Simulated server error");
+    }
 
     const resourceIndex = allResources.findIndex(
       (resource: any) => resource.id === id
@@ -126,7 +150,7 @@ export const editResource = async (req: Request, res: Response) => {
         .status(200)
         .json({ message: "Resource modified successfully!" });
     } catch (writeError) {
-      return res.status(500).json({ message: "Failed to save modifications." });
+      return res.status(400).json({ message: "Failed to save modifications." });
     }
   } catch (error) {
     return res.status(500).json({ message: "Failed to read resources." });
@@ -137,27 +161,32 @@ export const deleteResource = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const allResources = await readJSON("utils/resources.json");
-    var index = -1;
-    for (var i = 0; i < allResources.length; i++) {
-      var curcurrResource = allResources[i];
-      if (curcurrResource.id == id) index = i;
+    let index = -1;
+
+    // Find the index of the resource to delete
+    for (let i = 0; i < allResources.length; i++) {
+      const currentResource = allResources[i];
+      if (currentResource.id === id) {
+        index = i;
+        break;
+      }
     }
-    if (index != -1) {
-      allResources.splice(index, 1);
-      await fs.writeFile(
-        "utils/resources.json",
-        JSON.stringify(allResources),
-        "utf8"
-      );
-      return res
-        .status(200)
-        .json({ message: "Resource deleted successfully!" });
-    } else {
-      return res
-        .status(500)
-        .json({ message: "Error occurred, unable to delete!" });
+
+    // Handle the resource not found
+    if (index === -1) {
+      return res.status(404).json({ message: "Resource not found!" });
     }
+
+    // Remove the resource and update the file
+    allResources.splice(index, 1);
+    await fs.writeFile(
+      "utils/resources.json",
+      JSON.stringify(allResources, null, 2), // Use indentation for better readability
+      "utf8"
+    );
+
+    return res.status(200).json({ message: "Resource deleted successfully!" });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return res.status(500).json({ message: "Internal server error", error });
   }
 };
