@@ -4,6 +4,7 @@
   "description": "This is a reference project for the DVOPS subject.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "backend-test": "nyc --nycrc-path .nycrc-backend mocha -r ts-node/register test/**/*.ts"
   },
