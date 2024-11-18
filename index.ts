@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request,Response} from "express";
 import bodyParser from "body-parser";
 import { addTourValidation, addResource, viewResources, editResource, deleteResource, updateResourceValidation, viewResourceById } from './utils/ResourceUtil';
 
@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("./public"));
 
-app.get("/", (req, res) => {
+app.get("/", (req:Request, res:Response) => {
   res.sendFile(__dirname + "/public/" + startPage);
 });
 
