@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "backend-test": "mocha -r ts-node/register test/**/*.ts"
+    "backend-test": "nyc --nycrc-path .nycrc-backend mocha -r ts-node/register test/**/*.ts"
   },
   "keywords": [],
   "author": "",

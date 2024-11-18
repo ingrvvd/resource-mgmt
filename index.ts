@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import {addTourValidation, addResource, viewResources, editResource, deleteResource, updateResourceValidation } from "./utils/ResourceUtil";
+import { addTourValidation, addResource, viewResources, editResource, deleteResource, updateResourceValidation, viewResourceById } from './utils/ResourceUtil';
 
 export const app = express();
 const PORT = process.env.PORT || 5050;
@@ -18,6 +18,7 @@ app.post('/add-resource', addTourValidation, addResource)
 app.get('/view-resources', viewResources)
 app.put('/edit-resource/:id', updateResourceValidation, editResource)
 app.delete('/delete-resource/:id', deleteResource)
+app.get('/view-resource/:id', viewResourceById)
 
 export const server = app.listen(PORT, () => {
   const address = server.address();
