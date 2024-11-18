@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/body-parser": "^1.19.5",
     "@types/chai": "^5.0.1",
     "@types/chai-http": "^4.2.4",
     "@types/express": "^5.0.0",
