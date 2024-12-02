@@ -1,3 +1,34 @@
+# name: Automatic Testing for Resource Management Web App
+
+# on:
+#   push:
+#     branches: [ "main" ]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code from GitHub Repo
+#       uses: actions/checkout@v3
+      
+#     - name: Setup Node.js in Ubuntu
+#       uses: actions/setup-node@v3
+#       with:
+#         node-version: 18
+
+#     - name: Remove existing node_modules folder from cloned project
+#       run: rm -rf /home/runner/work/resource-mgmt/resource-mgmt/node_modules/*
+
+#     - name: Install dependencies for based on package.json
+#       run: npm install
+
+#     - name: Compile TypeScript
+#       run: npm run build
+
+#     - name: Run tests in "tests" folder
+#       run: npm run backend-test
+
 name: Automatic Testing for Resource Management Web App
 
 on:
@@ -11,20 +42,43 @@ jobs:
     steps:
     - name: Checkout code from GitHub Repo
       uses: actions/checkout@v3
-      
+
     - name: Setup Node.js in Ubuntu
       uses: actions/setup-node@v3
       with:
         node-version: 18
 
-    - name: Remove existing node_modules folder from cloned project
-      run: rm -rf /home/runner/work/resource-mgmt/resource-mgmt/node_modules/*
+    - name: Install system dependencies for Cypress
+      run: sudo apt-get update && sudo apt-get install -y libnss3 libatk1.0-0 libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3-dev
 
-    - name: Install dependencies for based on package.json
-      run: npm install
+    - name: Cache Node.js Modules
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+
+    - name: Install dependencies based on package-lock.json
+      run: npm ci
 
     - name: Compile TypeScript
       run: npm run build
 
-    - name: Run tests in "tests" folder
-      run: npm run backend-test
+    - name: Debug Cypress Info
+      run: npx cypress info
+
+    - name: Remove duplicate Cypress support file
+      run: |
+        rm cypress/support/e2e.ts
+
+    - name: Run the frontend test cases
+      run: |
+        rm -rf .nyc_output
+        npx nyc --nycrc-path .nycrc-frontend cypress run --config-file cypress.config.ts
+
+    - name: Upload Coverage Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-reports
+        path: coverage/
