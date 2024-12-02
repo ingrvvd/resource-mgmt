@@ -29,7 +29,7 @@ const addResource = () => {
     response = JSON.parse(request.responseText);
     console.log(response);
 
-    if (request.status === 200) {
+    if (request.status === 201) {
       messageElement.innerHTML = `Added Resource: ${jsonData.name}!`;
       messageElement.setAttribute("class", "text-success");
       resetForm();

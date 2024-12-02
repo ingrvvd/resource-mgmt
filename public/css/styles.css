@@ -5,3 +5,7 @@
 .card-header {
     background-color: aliceblue;
     };
+
+    .modal {
+        transition: none !important;
+      }
