@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rms-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rms-docker-image
+  template:
+    metadata:
+      labels:
+        app: rms-docker-image
+    spec:
+      containers:
+      - name: rms-container
+        image: ingrvvd/rms-docker-image:latest
+        ports:
+        - containerPort: 5050
