@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: rms-container
-        image: ingrvvd/rms-docker-image:latest
+        image: ingrvvd/rms-docker-image:v2
         ports:
         - containerPort: 5050
